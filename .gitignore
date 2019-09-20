@@ -1,0 +1,5 @@
+.idea
+cmake-build-debug
+cmake-build-remote-mcgill
+cmake-build-wsl
+CMakeLists.txt
