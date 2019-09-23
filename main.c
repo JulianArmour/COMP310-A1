@@ -8,8 +8,11 @@
 #include <signal.h>
 #include <fcntl.h>
 
+// the maximum number of characters allowed for a user-entered command (including '\0')
 static const int COMMAND_MAX_LENGTH = 256;
+// the maximum number of commands to keep in history
 static const int HISTORY_MAX_SIZE = 100;
+// the data-structure containing the historical commands
 typedef char History[100][256];
 
 /**
@@ -24,13 +27,17 @@ typedef char History[100][256];
  *              the most recent command sent to tiny-shell. To be added
  *              to history
  */
-void history_add(char history[HISTORY_MAX_SIZE][COMMAND_MAX_LENGTH], char *command) {
+void history_add(History history, char *command) {
     static int size; // the current size of the history
+
     if (size < HISTORY_MAX_SIZE) {
+        // insert the new command in the next available spot in the array
         strcpy(history[size], command);
         size++;
+
     } else {
-        // move the older commands down to make room for the new command
+        // move the older commands down to make room for the new command,
+        // which is inserted at the end of the array
         for (int i = 0; i < (HISTORY_MAX_SIZE - 1) ; ++i) {
             strcpy(history[i], history[i + 1]);
         }
@@ -38,7 +45,12 @@ void history_add(char history[HISTORY_MAX_SIZE][COMMAND_MAX_LENGTH], char *comma
     }
 }
 
-void history_print(char history[HISTORY_MAX_SIZE][COMMAND_MAX_LENGTH]) {
+/**
+ * Prints out the current tiny-shell history to stdout
+ *
+ * @param history the history data-structure used by tiny-shell
+ */
+void history_print(History history) {
     for (int i = 0; i < HISTORY_MAX_SIZE; ++i) {
         if (history[i][0] != '\0') {
             printf("%d  %s\n", i + 1, history[i]);
@@ -48,11 +60,7 @@ void history_print(char history[HISTORY_MAX_SIZE][COMMAND_MAX_LENGTH]) {
     }
 }
 
-/**
- *
- * @param dest
- * @return
- */
+
 void get_a_line(char *dest, int maxLineLength) {
     if (fgets(dest, maxLineLength, stdin) == NULL) {
         puts("Could not get command");
@@ -62,7 +70,7 @@ void get_a_line(char *dest, int maxLineLength) {
 
 /**
  *
- * @param command a command equivalent to runProgram(command)
+ * @param command a command that was sent to tiny-shell
  * @param tgtArgs where the parsed arguments will be placed. Terminated
  *              by a NULL pointer.
  */
@@ -85,7 +93,6 @@ void runProgram(char *command) {
     } else if (childPID == 0) { // in child process
         char *args[32]; // allow up to 30 program arguments, probably more than enough
         parseCommand(command, args, 32);
-
         // run the program
         execvp(args[0], args);
 
@@ -130,7 +137,6 @@ void runPipedPrograms(char *command, char *fifoPath) {
 
     } else {//tiny-shell
         waitpid(pid2, NULL, 0);
-        puts("done");
     }
 }
 
@@ -161,15 +167,16 @@ void my_system(char *command, char *fifoPath) {
     history_add(history, command);
 
     // make a copy of 'command'. Since I'm about to use strtok and I need
-    // the full command if runProgram() is called
+    // the full command if runProgram() or runPipedPrograms() are called
     char commandCopy[COMMAND_MAX_LENGTH];
     strcpy(commandCopy, command);
 
     // check for internal commands
     char *cmd = strtok(commandCopy, " ");
     if (strcmp(cmd, "chdir") == 0) {// chdir command
-        char *newDirPath = strtok(NULL, " ");// chdir argument (new directory path)
-
+        // chdir argument (new directory path)
+        char *newDirPath = strtok(NULL, " ");
+        // attempt to change the present directory
         if (chdir(newDirPath) == -1) {
             printf("%s: No such file or directory\n", newDirPath);
         }
@@ -177,14 +184,17 @@ void my_system(char *command, char *fifoPath) {
     } else if (strcmp(cmd, "history") == 0) {// history command
         history_print(history);
 
-    } else if (strcmp(cmd, "limit") == 0) {
+    } else if (strcmp(cmd, "limit") == 0) {// limit command
+        // get the limit argument
         char *strLimit = strtok(NULL, " ");
         setResourceLimit(strLimit);
 
     } else {
         if (strstr(command, " | ") == NULL) {
+            // not a piped command, execute the program normally
             runProgram(command);
         } else {
+            // is a piped command, check if a fifo was supplied to Tiny-shell
             if (fifoPath != NULL) {
                 runPipedPrograms(command, fifoPath);
             } else {
@@ -194,12 +204,47 @@ void my_system(char *command, char *fifoPath) {
     }
 }
 
+/**
+ * (Note: only I/O operations using read() and write() are considered safe in a
+ * signal handler function. Source: IEEE Std 1003.1, 2004 Edition.
+ * https://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html)
+ *
+ * This is my custom SIGINT signal handler. It prompts the user if they want to exit
+ * the Tiny-shell. They may answer: yes, Yes, y, Y to exit. Any other input will terminate
+ * Tiny-shell.
+ */
+void handleSIGINT(int signal) {
+    char response[4];
+    char msg[] = "\n>>> Do you wish to exit Tiny-shell(y/n)? ";
+    write(STDOUT_FILENO, msg, strlen(msg));
+    if(read(STDIN_FILENO, response, 4) != -1) {
+        if (response[0] == 'y' || response[0] == 'Y') {
+            exit(EXIT_SUCCESS);
+        } else {
+            write(STDOUT_FILENO, ">>> ", 4);
+        }
+    }
+}
+
+// override SIGTSTP handler to ignore the signal
+void handleSIGTSTP(int signal) {
+    write(STDOUT_FILENO, "\n>>> ", 5);
+}
+
 int main(int argc, char **argv) {
+    // get the fifo path from the argument (if there is one)
     char* fifoPath = NULL;
     if (argc > 1) fifoPath = argv[1];
 
+    // set-up SIGINT
+    signal(SIGINT, handleSIGINT);
+    // set-up SIGTSTP
+    signal(SIGTSTP, handleSIGTSTP);
+
+    // REPL
     while (1) {
         char command[COMMAND_MAX_LENGTH];
+        printf(">>> ");
         get_a_line(command, COMMAND_MAX_LENGTH);
         if (strlen(command) > 1) {
             //remove the newline character
