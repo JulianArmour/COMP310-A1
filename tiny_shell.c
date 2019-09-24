@@ -17,9 +17,10 @@ typedef char History[100][256];
 
 /**
  * Adds a command to the historical commands sent to tiny-shell.
- * Adding a command is O(n). I could have implemented as a linked-list
- * to achieve O(1) but since this assignment only requires n=100 and there aren't any
- * performance requirements, this is way more simple.
+ * Adding a command is O(n) when at-least 100 commands have been used in the shell.
+ * But O(1) if less than 100 have been used. I could have implemented as a linked-list
+ * to always achieve O(1) inserts but since this assignment only requires n=100 and
+ * there aren't any performance requirements, this is way simpler.
  *
  * @param history
  *              a historical list of commands sent to tiny-shell
@@ -60,7 +61,12 @@ void history_print(History history) {
     }
 }
 
-
+/**
+ * gets an input from the tiny-shell user.
+ *
+ * @param dest a buffer to store the input
+ * @param maxLineLength the size of the buffer dest
+ */
 void get_a_line(char *dest, int maxLineLength) {
     if (fgets(dest, maxLineLength, stdin) == NULL) {
         puts("Could not get command");
@@ -69,10 +75,13 @@ void get_a_line(char *dest, int maxLineLength) {
 }
 
 /**
+ * parses a program and arguments from a string of the format "program arg1 arg2 ..."
+ * to an array of strings equivalent to argv used by arbitrary programs.
  *
  * @param command a command that was sent to tiny-shell
  * @param tgtArgs where the parsed arguments will be placed. Terminated
  *              by a NULL pointer.
+ * @param argMaxLen the maximum number of arguments allowed in tgtArgs
  */
 void parseCommand(char* command, char *tgtArgs[], int argMaxLen) {
     char *arg = strtok(command, " ");
@@ -84,6 +93,12 @@ void parseCommand(char* command, char *tgtArgs[], int argMaxLen) {
     tgtArgs[i] = NULL;
 }
 
+/**
+ * runs a single program that is spawned as a child process of tiny-shell.
+ *
+ * @param command a tiny-shell command that is the relative path, absolute path, or name of a program in
+ *          one of the directories in PATH.
+ */
 void runProgram(char *command) {
     pid_t childPID = fork();
     if (childPID < 0) { // error
@@ -102,10 +117,18 @@ void runProgram(char *command) {
     }
 }
 
+/**
+ * runs 2 programs, piping the output of the first to the second.
+ *
+ * @param command the tiny-shell command in the form of "program1 | program2"
+ * @param fifoPath the path to the fifo used to pipe the programs
+ */
 void runPipedPrograms(char *command, char *fifoPath) {
+    // get the first and second program and arguments as a string
     char *command1 = strtok(command, "|");
     char *command2 = strtok(NULL, "|");
 
+    // program arguments equivalent to argv used by the programs.
     char *program1Args[32];
     char *program2Args[32];
     parseCommand(command1, program1Args, 32);
@@ -140,6 +163,11 @@ void runPipedPrograms(char *command, char *fifoPath) {
     }
 }
 
+/**
+ * Sets the soft-limit of the Tiny-shell and all processes it spawns to strLimit
+ *
+ * @param strLimit a base-10 number represented using a string. (e.g. "1000000")
+ */
 void setResourceLimit(char *strLimit) {
     // get current res limit
     struct rlimit resourceLimit;
@@ -160,6 +188,12 @@ void setResourceLimit(char *strLimit) {
     }
 }
 
+/**
+ * This is the function that handles commands inputted to Tiny-shell
+ *
+ * @param command a tiny-shell command string, the string character is NOT a newline char
+ * @param fifoPath the filepath to the fifo created with "mkfifo"
+ */
 void my_system(char *command, char *fifoPath) {
     // historical commands sent to tiny-shell
     static History history;
@@ -206,8 +240,9 @@ void my_system(char *command, char *fifoPath) {
 
 /**
  * (Note: only I/O operations using read() and write() are considered safe in a
- * signal handler function. Source: IEEE Std 1003.1, 2004 Edition.
- * https://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html)
+ * signal handler function. Source: http://man7.org/linux/man-pages/man7/signal-safety.7.html
+ * I found this because I was having buffering problems with printf() and found this answer:
+ * https://stackoverflow.com/a/9547988)
  *
  * This is my custom SIGINT signal handler. It prompts the user if they want to exit
  * the Tiny-shell. They may answer: yes, Yes, y, Y to exit. Any other input will terminate
@@ -245,13 +280,12 @@ int main(int argc, char **argv) {
     while (1) {
         char command[COMMAND_MAX_LENGTH];
         printf(">>> ");
+        fflush(stdout);
         get_a_line(command, COMMAND_MAX_LENGTH);
         if (strlen(command) > 1) {
             //remove the newline character
             command[strlen(command) - 1] = '\0';
             my_system(command, fifoPath);
-        } else {
-            return 0;
         }
     }
 }

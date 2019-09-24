@@ -1,0 +1,135 @@
+signal(SIGINT, 0x56343619e4a0)                                                       = 0
+signal(SIGTSTP, 0x56343619e58d)                                                      = 0
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("ls\n", 256, 0x7fdd781c6a00)                                                   = 0x7ffdb7304590
+strlen("ls\n")                                                                       = 3
+strlen("ls\n")                                                                       = 3
+strcpy(0x56343639f060, "ls")                                                         = 0x56343639f060
+strcpy(0x7ffdb7304410, "ls")                                                         = 0x7ffdb7304410
+strtok("ls", " ")                                                                    = "ls"
+strcmp("ls", "chdir")                                                                = 9
+strcmp("ls", "history")                                                              = 4
+strcmp("ls", "limit")                                                                = 10
+strstr("ls", " | ")                                                                  = nil
+fork()                                                                               = 4042
+waitpid(4042, 0, 0 <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                              = 4042
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("chdir /tmp/\n", 256, 0x7fdd781c6a00)                                          = 0x7ffdb7304590
+strlen("chdir /tmp/\n")                                                              = 12
+strlen("chdir /tmp/\n")                                                              = 12
+strcpy(0x56343639f160, "chdir /tmp/")                                                = 0x56343639f160
+strcpy(0x7ffdb7304410, "chdir /tmp/")                                                = 0x7ffdb7304410
+strtok("chdir /tmp/", " ")                                                           = "chdir"
+strcmp("chdir", "chdir")                                                             = 0
+strtok(nil, " ")                                                                     = "/tmp/"
+chdir("/tmp/")                                                                       = 0
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("pwd\n", 256, 0x7fdd781c6a00)                                                  = 0x7ffdb7304590
+strlen("pwd\n")                                                                      = 4
+strlen("pwd\n")                                                                      = 4
+strcpy(0x56343639f260, "pwd")                                                        = 0x56343639f260
+strcpy(0x7ffdb7304410, "pwd")                                                        = 0x7ffdb7304410
+strtok("pwd", " ")                                                                   = "pwd"
+strcmp("pwd", "chdir")                                                               = 13
+strcmp("pwd", "history")                                                             = 8
+strcmp("pwd", "limit")                                                               = 4
+strstr("pwd", " | ")                                                                 = nil
+fork()                                                                               = 4043
+waitpid(4043, 0, 0 <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                              = 4043
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("history\n", 256, 0x7fdd781c6a00)                                              = 0x7ffdb7304590
+strlen("history\n")                                                                  = 8
+strlen("history\n")                                                                  = 8
+strcpy(0x56343639f360, "history")                                                    = 0x56343639f360
+strcpy(0x7ffdb7304410, "history")                                                    = 0x7ffdb7304410
+strtok("history", " ")                                                               = "history"
+strcmp("history", "chdir")                                                           = 5
+strcmp("history", "history")                                                         = 0
+printf("%d  %s\n", 1, "ls")                                                          = 6
+printf("%d  %s\n", 2, "chdir /tmp/")                                                 = 15
+printf("%d  %s\n", 3, "pwd")                                                         = 7
+printf("%d  %s\n", 4, "history")                                                     = 11
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("./test-limit\n", 256, 0x7fdd781c6a00)                                         = 0x7ffdb7304590
+strlen("./test-limit\n")                                                             = 13
+strlen("./test-limit\n")                                                             = 13
+strcpy(0x56343639f460, "./test-limit")                                               = 0x56343639f460
+strcpy(0x7ffdb7304410, "./test-limit")                                               = 0x7ffdb7304410
+strtok("./test-limit", " ")                                                          = "./test-limit"
+strcmp("./test-limit", "chdir")                                                      = -53
+strcmp("./test-limit", "history")                                                    = -58
+strcmp("./test-limit", "limit")                                                      = -62
+strstr("./test-limit", " | ")                                                        = nil
+fork()                                                                               = 4044
+waitpid(4044, 0, 0 <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                              = 4044
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("limit 1500000\n", 256, 0x7fdd781c6a00)                                        = 0x7ffdb7304590
+strlen("limit 1500000\n")                                                            = 14
+strlen("limit 1500000\n")                                                            = 14
+strcpy(0x56343639f560, "limit 1500000")                                              = 0x56343639f560
+strcpy(0x7ffdb7304410, "limit 1500000")                                              = 0x7ffdb7304410
+strtok("limit 1500000", " ")                                                         = "limit"
+strcmp("limit", "chdir")                                                             = 9
+strcmp("limit", "history")                                                           = 4
+strcmp("limit", "limit")                                                             = 0
+strtok(nil, " ")                                                                     = "1500000"
+getrlimit(2, 0x7ffdb73043e0, 6, 7)                                                   = 0
+strtoul(0x7ffdb7304416, 0, 10, 0x7fdd77ef0fa0)                                       = 0x16e360
+setrlimit(2, 0x7ffdb73043e0, 0xffffffffffe91ca0, 0)                                  = 0
+printf("New resource limit: %lu Bytes\n", 1500000)                                   = 34
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("./test-limit\n", 256, 0x7fdd781c6a00)                                         = 0x7ffdb7304590
+strlen("./test-limit\n")                                                             = 13
+strlen("./test-limit\n")                                                             = 13
+strcpy(0x56343639f660, "./test-limit")                                               = 0x56343639f660
+strcpy(0x7ffdb7304410, "./test-limit")                                               = 0x7ffdb7304410
+strtok("./test-limit", " ")                                                          = "./test-limit"
+strcmp("./test-limit", "chdir")                                                      = -53
+strcmp("./test-limit", "history")                                                    = -58
+strcmp("./test-limit", "limit")                                                      = -62
+strstr("./test-limit", " | ")                                                        = nil
+fork()                                                                               = 4045
+waitpid(4045, 0, 0 <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                              = 4045
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("./test-limit | wc\n", 256, 0x7fdd781c6a00)                                    = 0x7ffdb7304590
+strlen("./test-limit | wc\n")                                                        = 18
+strlen("./test-limit | wc\n")                                                        = 18
+strcpy(0x56343639f760, "./test-limit | wc")                                          = 0x56343639f760
+strcpy(0x7ffdb7304410, "./test-limit | wc")                                          = 0x7ffdb7304410
+strtok("./test-limit | wc", " ")                                                     = "./test-limit"
+strcmp("./test-limit", "chdir")                                                      = -53
+strcmp("./test-limit", "history")                                                    = -58
+strcmp("./test-limit", "limit")                                                      = -62
+strstr("./test-limit | wc", " | ")                                                   = " | wc"
+strtok("./test-limit | wc", "|")                                                     = "./test-limit "
+strtok(nil, "|")                                                                     = " wc"
+strtok("./test-limit ", " ")                                                         = "./test-limit"
+strtok(nil, " ")                                                                     = nil
+strtok(" wc", " ")                                                                   = "wc"
+strtok(nil, " ")                                                                     = nil
+fork()                                                                               = 4046
+waitpid(4046, 0, 0 <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                              = 4046
+printf(">>> ")                                                                       = 4
+fflush(0x7fdd781c7760)                                                               = 0
+fgets("./test-limit", 256, 0x7fdd781c6a00)                                           = 0
+puts("Could not get command")                                                        = 22
+exit(1 <no return ...>
++++ exited (status 1) +++

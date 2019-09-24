@@ -1,0 +1,66 @@
+execve("./tiny", ["./tiny", "/tmp/jafifo"], 0x7ffd4a46f698 /* 25 vars */) = 0
+brk(NULL)                               = 0x559e8bd42000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=306026, ...}) = 0
+mmap(NULL, 306026, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f632a42f000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260\34\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=2030544, ...}) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f632a42d000
+mmap(NULL, 4131552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f6329e62000
+mprotect(0x7f632a049000, 2097152, PROT_NONE) = 0
+mmap(0x7f632a249000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1e7000) = 0x7f632a249000
+mmap(0x7f632a24f000, 15072, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f632a24f000
+close(3)                                = 0
+arch_prctl(ARCH_SET_FS, 0x7f632a42e4c0) = 0
+mprotect(0x7f632a249000, 16384, PROT_READ) = 0
+mprotect(0x559e8a89d000, 4096, PROT_READ) = 0
+mprotect(0x7f632a47a000, 4096, PROT_READ) = 0
+munmap(0x7f632a42f000, 306026)          = 0
+rt_sigaction(SIGINT, {sa_handler=0x559e8a69d4a0, sa_mask=[INT], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f6329ea0f20}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGTSTP, {sa_handler=0x559e8a69d58d, sa_mask=[TSTP], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f6329ea0f20}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+brk(NULL)                               = 0x559e8bd42000
+brk(0x559e8bd63000)                     = 0x559e8bd63000
+write(1, ">>> ", 4)                     = 4
+fstat(0, {st_mode=S_IFREG|0644, st_size=85, ...}) = 0
+read(0, "ls\nchdir /tmp/\npwd\nhistory\n./tes"..., 4096) = 85
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f632a42e790) = 6345
+wait4(6345, NULL, 0, NULL)              = 6345
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=6345, si_uid=1348837, si_status=0, si_utime=0, si_stime=0} ---
+write(1, ">>> ", 4)                     = 4
+chdir("/tmp/")                          = 0
+write(1, ">>> ", 4)                     = 4
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f632a42e790) = 6346
+wait4(6346, NULL, 0, NULL)              = 6346
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=6346, si_uid=1348837, si_status=0, si_utime=0, si_stime=0} ---
+write(1, ">>> ", 4)                     = 4
+write(1, "1  ls\n", 6)                  = 6
+write(1, "2  chdir /tmp/\n", 15)        = 15
+write(1, "3  pwd\n", 7)                 = 7
+write(1, "4  history\n", 11)            = 11
+write(1, ">>> ", 4)                     = 4
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f632a42e790) = 6347
+wait4(6347, NULL, 0, NULL)              = 6347
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=6347, si_uid=1348837, si_status=0, si_utime=0, si_stime=0} ---
+write(1, ">>> ", 4)                     = 4
+prlimit64(0, RLIMIT_DATA, NULL, {rlim_cur=RLIM64_INFINITY, rlim_max=RLIM64_INFINITY}) = 0
+prlimit64(0, RLIMIT_DATA, {rlim_cur=1500000, rlim_max=RLIM64_INFINITY}, NULL) = 0
+write(1, "New resource limit: 1500000 Byte"..., 34) = 34
+write(1, ">>> ", 4)                     = 4
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f632a42e790) = 6348
+wait4(6348, NULL, 0, NULL)              = 6348
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=6348, si_uid=1348837, si_status=0, si_utime=0, si_stime=0} ---
+write(1, ">>> ", 4)                     = 4
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f632a42e790) = 6349
+wait4(6349, NULL, 0, NULL)              = 6349
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=6349, si_uid=1348837, si_status=0, si_utime=0, si_stime=0} ---
+write(1, ">>> ", 4)                     = 4
+read(0, "", 4096)                       = 0
+write(1, "Could not get command\n", 22) = 22
+exit_group(1)                           = ?
++++ exited with 1 +++
